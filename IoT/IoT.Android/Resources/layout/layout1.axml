@@ -5,40 +5,42 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 	<TextView
+		android:id="@+id/textView1"
 		android:text="Welcome to Leany Heating, please login below"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/textView1"
 		android:layout_marginTop="30.0dp"
 		android:layout_marginLeft="25.0dp"
 		android:layout_marginRight="25.0dp"
 		android:textSize = "25px" />
 	<EditText
+		android:id="@+id/editTextEmail"
 		android:inputType="textEmailAddress"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/editTextEmail"
 		android:layout_marginTop="32.0dp"
 		android:layout_marginRight="39.0dp"
 		android:layout_marginLeft="31.0dp"
-		android:hint="email address" />
+		android:hint="email address"
+		android:textSize = "25px"/>
 	<EditText
+		android:id="@+id/editTextPassword"
 		android:inputType="textPassword"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="32.0dp"
 		android:layout_marginRight="39.0dp"
 		android:layout_marginLeft="31.0dp"
-		android:id="@+id/editTextPassword"
-		android:hint="password" />
+		android:hint="password"
+		android:textSize = "25px"/>
 	<Button
+		android:id="@+id/buttonLogin"
 		android:text="Login"
 		android:layout_width="match_parent"
 		android:layout_height="51.0dp"
 		android:minWidth="25px"
 		android:minHeight="35px"
-		android:id="@+id/buttonLogin"
 		android:textColor="#ffffffff"
 		android:textStyle="normal"
 		android:textSize = "25px"
