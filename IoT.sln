@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.1000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.Android", "IoT\IoT.Android\IoT.Android.csproj", "{4EB8D709-40BC-4791-8A58-11D09635D9EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT", "IoT\IoT\IoT.csproj", "{86BE0FE5-4831-4E34-B0CB-7BD5DAA0AB06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT_Heating2", "IoT\IoT\IoT_Heating2.csproj", "{86BE0FE5-4831-4E34-B0CB-7BD5DAA0AB06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

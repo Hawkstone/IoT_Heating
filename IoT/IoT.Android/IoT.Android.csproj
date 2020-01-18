@@ -90,9 +90,9 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IoT\IoT.csproj">
-      <Project>{7A955B4C-D204-4E6C-8353-D8E891C25FD9}</Project>
-      <Name>IoT</Name>
+    <ProjectReference Include="..\IoT\IoT_Heating2.csproj">
+      <Project>{86BE0FE5-4831-4E34-B0CB-7BD5DAA0AB06}</Project>
+      <Name>IoT_Heating2</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
