@@ -1,6 +1,7 @@
 ﻿
 using Android.App;
 using Android.Widget;
+using System.Collections.Generic;
 
 namespace IoT
 {
@@ -19,10 +20,10 @@ namespace IoT
             }
         }
 
-        public class GetUsers
-        {
-
-        }
-
+        //public async Task<List<Models.UserRecord>> GetUserRecord(int userID = -1)
+        //{
+        //    RestService _restService = new RestService();
+        //    string requestUri = Constants.apiMarkGriffithsEndpoint;
+        //}
     }
 }

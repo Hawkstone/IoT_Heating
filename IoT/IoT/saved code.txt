@@ -1,0 +1,34 @@
+﻿        // get the password for the given email address
+        requestUri = Constants.apiMarkGriffithsEndpoint;
+        requestUri += "/getPassword/" + txtEmail.Text.Trim();
+        var dbpassword = await _restService.GetDataPointAsync(requestUri);
+
+
+        /// <summary>
+        /// Get database user records
+        /// </summary>
+        /// <param name="uri">/getUserRecordByID</param>
+        /// <returns>User password</returns>
+        public async Task<List<Models.UserRecord>> GetUserRecordsByIDasync(string uri, int ID)
+        {
+            try
+            {
+                HttpResponseMessage response = await _client.GetAsync(uri);
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    RootObjectDTO r = JsonConvert.DeserializeObject<RootObjectDTO>(content);                // deserialise the data packet
+                    var userRecords = JsonConvert.DeserializeObject<List<Models.UserRecord>>(r.Data);       // deserialise user record objects
+
+                    return userRecords;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("\tERROR {0}", ex.Message);
+            }
+            return new List<Models.UserRecord>();
+        }
+
+
+

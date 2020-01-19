@@ -32,9 +32,35 @@ namespace IoT
         /// <summary>
         /// Get database user record
         /// </summary>
-        /// <param name="uri">getPassword/:email</param>
+        /// <param name="uri">/getUserRecordByEmail</param>
         /// <returns>User password</returns>
-        public async Task<List<Models.UserRecord>> GetUserRecordAsync(string uri)
+        public async Task<Models.UserRecord> GetUserRecordByEmailAsync(string uri, string email)
+        {
+            try
+            {
+                HttpResponseMessage response = await _client.GetAsync(uri + "/" + email);
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    RootObjectDTO r = JsonConvert.DeserializeObject<RootObjectDTO>(content);                // deserialise the data packet
+                    var userRecord = JsonConvert.DeserializeObject<Models.UserRecord>(r.Data);       // deserialise user record objects
+
+                    return userRecord;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("\tERROR {0}", ex.Message);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Get database user records
+        /// </summary>
+        /// <param name="uri">/getUserRecordByID</param>
+        /// <returns>User password</returns>
+        public async Task<List<Models.UserRecord>> GetUserRecordsByIDasync(string uri, int ID)
         {
             try
             {
@@ -42,8 +68,8 @@ namespace IoT
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
-                    RootObjectDTO r = JsonConvert.DeserializeObject<RootObjectDTO>(content);        // deserialise the data packet
-                    var userRecords = JsonConvert.DeserializeObject<List<Models.UserRecord>>(r.Data);      // deserialise user record objects
+                    RootObjectDTO r = JsonConvert.DeserializeObject<RootObjectDTO>(content);                // deserialise the data packet
+                    var userRecords = JsonConvert.DeserializeObject<List<Models.UserRecord>>(r.Data);       // deserialise user record objects
 
                     return userRecords;
                 }
