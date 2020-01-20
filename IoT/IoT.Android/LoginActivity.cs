@@ -1,13 +1,9 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Views;
-using Android.Views.InputMethods;
 using Android.Widget;
 using IoT;
 using System;
-using System.Collections.Generic;
 
 [assembly: Xamarin.Forms.Dependency(typeof(Services.MessageAndroid))]
 
@@ -30,13 +26,11 @@ namespace IoT.Droid
 
         async void ButtonLoginClicked(object sender, EventArgs eventArgs)
         {
-            EditText txtEmail = FindViewById<EditText>(Resource.Id.editTextEmail);
-            EditText txtPassword = FindViewById<EditText>(Resource.Id.editTextPassword);
-            Button button = FindViewById<Button>(Resource.Id.buttonLogin);
-
-            //txtEmail.Focusable = false;
-            //txtPassword.Focusable = false;
-            button.Enabled = false;
+            EditText etEmail = FindViewById<EditText>(Resource.Id.editTextEmail);
+            EditText etPassword = FindViewById<EditText>(Resource.Id.editTextPassword);
+            Button btLogin = FindViewById<Button>(Resource.Id.buttonLogin);
+            
+            btLogin.Enabled = false;
 
             RestService _restService;
             _restService = new RestService();
@@ -44,7 +38,7 @@ namespace IoT.Droid
 
             // get the user record from email address
             requestUri += "/getUserRecordByEmail";
-            Models.UserRecord userRecord = (await _restService.GetUserRecordByEmailAsync(requestUri, txtEmail.Text.Trim()));
+            Models.UserRecord userRecord = (await _restService.GetUserRecordByEmailAsync(requestUri, etEmail.Text.Trim()));
 
             bool loginSuccess = false;
 
@@ -56,21 +50,22 @@ namespace IoT.Droid
                 // compare returned password with entered password 
                 if (Models.userRecord.Password.Length > 0)
                 {
-                    if (Models.userRecord.Password == txtPassword.Text) { loginSuccess = true; }
+                    if (Models.userRecord.Password == etPassword.Text) { loginSuccess = true; }
                 }
             }
 
             if (loginSuccess)
             {
                 Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Login succeeded");
-                SetContentView(Resource.Layout.MainActivity);
+
+
+
+                StartActivity(typeof(MainActivity));
             }
             else
             {
                 Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Login failed, please try again");
-                //txtEmail.Focusable = true;
-                //txtPassword.Focusable = true;
-                button.Enabled = true;
+                btLogin.Enabled = true;
             }
 
         }

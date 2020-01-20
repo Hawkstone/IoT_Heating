@@ -3,9 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-		<TextView
-		android:id="@+id/welcome"
+	<TextView
+		android:id="@+id/welcomeMA"
 		android:text="Welcome..."
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
