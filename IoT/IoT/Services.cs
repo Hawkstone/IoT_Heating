@@ -1,7 +1,6 @@
 ﻿
 using Android.App;
 using Android.Widget;
-using System.Collections.Generic;
 
 namespace IoT
 {
@@ -19,6 +18,8 @@ namespace IoT
                 Toast.MakeText(Application.Context, message, ToastLength.Short).Show();
             }
         }
+
+
 
         //public async Task<List<Models.UserRecord>> GetUserRecord(int userID = -1)
         //{

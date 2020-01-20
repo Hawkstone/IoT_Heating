@@ -4,6 +4,8 @@ using Android.OS;
 using Android.Widget;
 using IoT;
 using System;
+using Xamarin.Essentials;
+using System.Threading.Tasks;
 
 [assembly: Xamarin.Forms.Dependency(typeof(Services.MessageAndroid))]
 
@@ -12,7 +14,7 @@ namespace IoT.Droid
     [Activity(Label = "Leany Heating", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class LoginActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        protected override void OnCreate(Bundle savedInstanceState)
+        async protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
@@ -22,25 +24,61 @@ namespace IoT.Droid
 
             Button button = FindViewById<Button>(Resource.Id.buttonLogin);
             button.Click += ButtonLoginClicked;
+
+            // see if the user has is already logged in
+            var userEmail = Preferences.Get("userEmail", "");
+            var userPassword = Preferences.Get("userPassword", "");
+            if (userEmail.Length > 0 && userPassword.Length > 0)
+            {
+                button.Enabled = false;
+
+                EditText etEmail = FindViewById<EditText>(Resource.Id.editTextEmail);
+                EditText etPassword = FindViewById<EditText>(Resource.Id.editTextPassword);
+                etEmail.Enabled = false;
+                etPassword.Enabled = false;
+
+                TextView tv = FindViewById<TextView>(Resource.Id.welcome);
+                tv.Text = "Attempting to log back in, please wait";
+                
+                Models.loginSuccess = (await Login(userEmail, userPassword));
+                if (Models.loginSuccess)
+                {
+                    StartActivity(typeof(MainActivity));
+                }
+            }
         }
 
         async void ButtonLoginClicked(object sender, EventArgs eventArgs)
         {
-            EditText etEmail = FindViewById<EditText>(Resource.Id.editTextEmail);
-            EditText etPassword = FindViewById<EditText>(Resource.Id.editTextPassword);
             Button btLogin = FindViewById<Button>(Resource.Id.buttonLogin);
-            
             btLogin.Enabled = false;
 
+            // login using entered credentials
+            EditText etEmail = FindViewById<EditText>(Resource.Id.editTextEmail);
+            EditText etPassword = FindViewById<EditText>(Resource.Id.editTextPassword);
+            Models.loginSuccess = (await Login(etEmail.Text, etPassword.Text));
+            if (Models.loginSuccess)
+            {
+                StartActivity(typeof(MainActivity));
+            }
+            else
+            {
+                btLogin.Enabled = true;
+            }
+        }
+
+        /// <summary>check the user credentials against webserver data</summary>
+        /// <param name="email">login email address</param>
+        /// <param name="password">login password</param>
+        public async Task<bool> Login(string email, string password)
+        {
             RestService _restService;
             _restService = new RestService();
             string requestUri = Constants.apiMarkGriffithsEndpoint;
 
             // get the user record from email address
             requestUri += "/getUserRecordByEmail";
-            Models.UserRecord userRecord = (await _restService.GetUserRecordByEmailAsync(requestUri, etEmail.Text.Trim()));
-
-            bool loginSuccess = false;
+            Models.UserRecord userRecord = (await _restService.GetUserRecordByEmailAsync(requestUri, email.Trim()));
 
             if (userRecord != null)
             {
@@ -50,24 +88,22 @@ namespace IoT.Droid
                 // compare returned password with entered password 
                 if (Models.userRecord.Password.Length > 0)
                 {
-                    if (Models.userRecord.Password == etPassword.Text) { loginSuccess = true; }
+                    if (Models.userRecord.Password == password) { Models.loginSuccess = true; }
                 }
             }
 
-            if (loginSuccess)
+            if (Models.loginSuccess)
             {
                 Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Login succeeded");
-
-
-
-                StartActivity(typeof(MainActivity));
+                Preferences.Set("userEmail", userRecord.Email);
+                Preferences.Set("userPassword", userRecord.Password);
+                return true;
             }
             else
             {
                 Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Login failed, please try again");
-                btLogin.Enabled = true;
             }
-
+            return false;
         }
     }
 }

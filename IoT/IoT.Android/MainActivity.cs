@@ -1,7 +1,9 @@
 ﻿
+using System;
 using Android.App;
 using Android.OS;
 using Android.Widget;
+using Xamarin.Essentials;
 
 namespace IoT.Droid
 {
@@ -13,9 +15,20 @@ namespace IoT.Droid
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.MainActivity);
 
+            Button button = FindViewById<Button>(Resource.Id.buttonLogout);
+            button.Click += ButtonLogoutClicked;
+
             Models.UserRecord userRecord = Models.userRecord;
             TextView tvWelcome = FindViewById<TextView>(Resource.Id.welcomeMA);
             tvWelcome.Text = "Welcome " + userRecord.FirstName + " " + userRecord.LastName; 
+        }
+
+        private void ButtonLogoutClicked(object sender, EventArgs e)
+        {
+            Preferences.Remove("userEmail");
+            Preferences.Remove("userPassword");
+
+            StartActivity(typeof(LoginActivity));
         }
     }
 }

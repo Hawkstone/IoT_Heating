@@ -20,5 +20,6 @@
 
         public static UserRecord userRecord = null;
         public static int userID = 0;
+        public static bool loginSuccess = false;
     }
 }

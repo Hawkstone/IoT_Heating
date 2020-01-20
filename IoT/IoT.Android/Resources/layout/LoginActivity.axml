@@ -5,7 +5,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 	<TextView
-		android:id="@+id/textView1"
+		android:id="@+id/welcome"
 		android:text="Welcome to Leany Heating, please login below"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
