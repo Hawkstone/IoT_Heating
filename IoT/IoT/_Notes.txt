@@ -1,4 +1,18 @@
-﻿        // get the password for the given email address
+﻿In XAML designer select Galaxy Nexus.
+
+Add new activity / content page using 'Android Layout'. Then Add .cs file with same name.
+
+each .cs file needs to have the same header as MainActivity, also needs to call SetContentView
+
+
+
+Moto E4 Plus: 
+5.5-inch IPS LCD HD (1,280 x 720 pixels) 267 ppi
+
+
+
+--------------------------------------------------------------------------------------------------------------------
+        // get the password for the given email address
         requestUri = Constants.apiMarkGriffithsEndpoint;
         requestUri += "/getPassword/" + txtEmail.Text.Trim();
         var dbpassword = await _restService.GetDataPointAsync(requestUri);

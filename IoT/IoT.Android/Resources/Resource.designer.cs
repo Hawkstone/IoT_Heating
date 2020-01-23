@@ -5421,26 +5421,26 @@ namespace IoT.Droid
 			// aapt resource value: 0x7f0b0061
 			public const int list_item = 2131427425;
 			
-			// aapt resource value: 0x7f0b00d0
-			public const int main_appbar = 2131427536;
-			
 			// aapt resource value: 0x7f0b00d2
-			public const int main_tablayout = 2131427538;
+			public const int main_appbar = 2131427538;
 			
-			// aapt resource value: 0x7f0b00d1
-			public const int main_toolbar = 2131427537;
+			// aapt resource value: 0x7f0b00d4
+			public const int main_tablayout = 2131427540;
 			
 			// aapt resource value: 0x7f0b00d3
-			public const int main_viewpager = 2131427539;
+			public const int main_toolbar = 2131427539;
 			
-			// aapt resource value: 0x7f0b00d8
-			public const int masked = 2131427544;
+			// aapt resource value: 0x7f0b00d5
+			public const int main_viewpager = 2131427541;
+			
+			// aapt resource value: 0x7f0b00da
+			public const int masked = 2131427546;
 			
 			// aapt resource value: 0x7f0b00c3
 			public const int media_actions = 2131427523;
 			
-			// aapt resource value: 0x7f0b00d6
-			public const int message = 2131427542;
+			// aapt resource value: 0x7f0b00d8
+			public const int message = 2131427544;
 			
 			// aapt resource value: 0x7f0b0031
 			public const int middle = 2131427377;
@@ -5568,6 +5568,9 @@ namespace IoT.Droid
 			// aapt resource value: 0x7f0b0075
 			public const int radio = 2131427445;
 			
+			// aapt resource value: 0x7f0b00d0
+			public const int relativeLayout1 = 2131427536;
+			
 			// aapt resource value: 0x7f0b004a
 			public const int right = 2131427402;
 			
@@ -5637,11 +5640,11 @@ namespace IoT.Droid
 			// aapt resource value: 0x7f0b008a
 			public const int select_dialog_listview = 2131427466;
 			
-			// aapt resource value: 0x7f0b00d4
-			public const int shellcontent_appbar = 2131427540;
+			// aapt resource value: 0x7f0b00d6
+			public const int shellcontent_appbar = 2131427542;
 			
-			// aapt resource value: 0x7f0b00d5
-			public const int shellcontent_toolbar = 2131427541;
+			// aapt resource value: 0x7f0b00d7
+			public const int shellcontent_toolbar = 2131427543;
 			
 			// aapt resource value: 0x7f0b0074
 			public const int shortcut = 2131427444;
@@ -5712,6 +5715,9 @@ namespace IoT.Droid
 			// aapt resource value: 0x7f0b0069
 			public const int textSpacerNoTitle = 2131427433;
 			
+			// aapt resource value: 0x7f0b00d1
+			public const int textView1 = 2131427537;
+			
 			// aapt resource value: 0x7f0b009a
 			public const int text_input_password_toggle = 2131427482;
 			
@@ -5769,8 +5775,8 @@ namespace IoT.Droid
 			// aapt resource value: 0x7f0b0016
 			public const int view_offset_helper = 2131427350;
 			
-			// aapt resource value: 0x7f0b00d7
-			public const int visible = 2131427543;
+			// aapt resource value: 0x7f0b00d9
+			public const int visible = 2131427545;
 			
 			// aapt resource value: 0x7f0b00b5
 			public const int volume_item_container = 2131427509;
@@ -6067,25 +6073,28 @@ namespace IoT.Droid
 			public const int notification_template_part_time = 2130968640;
 			
 			// aapt resource value: 0x7f040041
-			public const int RootLayout = 2130968641;
+			public const int ReloadCredentials = 2130968641;
 			
 			// aapt resource value: 0x7f040042
-			public const int select_dialog_item_material = 2130968642;
+			public const int RootLayout = 2130968642;
 			
 			// aapt resource value: 0x7f040043
-			public const int select_dialog_multichoice_material = 2130968643;
+			public const int select_dialog_item_material = 2130968643;
 			
 			// aapt resource value: 0x7f040044
-			public const int select_dialog_singlechoice_material = 2130968644;
+			public const int select_dialog_multichoice_material = 2130968644;
 			
 			// aapt resource value: 0x7f040045
-			public const int ShellContent = 2130968645;
+			public const int select_dialog_singlechoice_material = 2130968645;
 			
 			// aapt resource value: 0x7f040046
-			public const int support_simple_spinner_dropdown_item = 2130968646;
+			public const int ShellContent = 2130968646;
 			
 			// aapt resource value: 0x7f040047
-			public const int tooltip = 2130968647;
+			public const int support_simple_spinner_dropdown_item = 2130968647;
+			
+			// aapt resource value: 0x7f040048
+			public const int tooltip = 2130968648;
 			
 			static Layout()
 			{

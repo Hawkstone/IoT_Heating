@@ -13,6 +13,7 @@ namespace IoT.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.MainActivity);
 
             Button button = FindViewById<Button>(Resource.Id.buttonLogout);
@@ -20,7 +21,7 @@ namespace IoT.Droid
 
             Models.UserRecord userRecord = Models.userRecord;
             TextView tvWelcome = FindViewById<TextView>(Resource.Id.welcomeMA);
-            tvWelcome.Text = "Welcome " + userRecord.FirstName + " " + userRecord.LastName; 
+            tvWelcome.Text = "Welcome to Leany Heating\n" + userRecord.FirstName + " " + userRecord.LastName; 
         }
 
         private void ButtonLogoutClicked(object sender, EventArgs e)

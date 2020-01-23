@@ -1,11 +1,12 @@
 ﻿using Android.App;
 using Android.Content.PM;
+using Android.Graphics;
 using Android.OS;
 using Android.Widget;
 using IoT;
 using System;
-using Xamarin.Essentials;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 [assembly: Xamarin.Forms.Dependency(typeof(Services.MessageAndroid))]
 
@@ -19,7 +20,6 @@ namespace IoT.Droid
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
-
             SetContentView(Resource.Layout.LoginActivity);
 
             Button button = FindViewById<Button>(Resource.Id.buttonLogin);
@@ -30,20 +30,21 @@ namespace IoT.Droid
             var userPassword = Preferences.Get("userPassword", "");
             if (userEmail.Length > 0 && userPassword.Length > 0)
             {
-                button.Enabled = false;
+                SetContentView(Resource.Layout.ReloadCredentials);
 
-                EditText etEmail = FindViewById<EditText>(Resource.Id.editTextEmail);
-                EditText etPassword = FindViewById<EditText>(Resource.Id.editTextPassword);
-                etEmail.Enabled = false;
-                etPassword.Enabled = false;
-
-                TextView tv = FindViewById<TextView>(Resource.Id.welcome);
-                tv.Text = "Attempting to log back in, please wait";
-                
                 Models.loginSuccess = (await Login(userEmail, userPassword));
                 if (Models.loginSuccess)
                 {
                     StartActivity(typeof(MainActivity));
+                }
+                else
+                {
+                    SetContentView(Resource.Layout.LoginActivity);
+                    button = FindViewById<Button>(Resource.Id.buttonLogin);
+                    button.Click += ButtonLoginClicked;
+
+                    EditText et = FindViewById<EditText>(Resource.Id.editTextEmail);
+                    et.RequestFocus();
                 }
             }
         }
@@ -52,6 +53,8 @@ namespace IoT.Droid
         {
             Button btLogin = FindViewById<Button>(Resource.Id.buttonLogin);
             btLogin.Enabled = false;
+            btLogin.SetBackgroundColor(Color.ParseColor(Constants.buttonDisabledColor));
+
 
             // login using entered credentials
             EditText etEmail = FindViewById<EditText>(Resource.Id.editTextEmail);
@@ -61,10 +64,8 @@ namespace IoT.Droid
             {
                 StartActivity(typeof(MainActivity));
             }
-            else
-            {
-                btLogin.Enabled = true;
-            }
+            btLogin.Enabled = true;
+            btLogin.SetBackgroundColor(Color.ParseColor(Constants.buttonBackgroundColor));
         }
 
         /// <summary>check the user credentials against webserver data</summary>
