@@ -66,6 +66,7 @@ namespace IoT.Droid
             }
             btLogin.Enabled = true;
             btLogin.SetBackgroundColor(Color.ParseColor(Constants.buttonBackgroundColor));
+            return;
         }
 
         /// <summary>check the user credentials against webserver data</summary>
