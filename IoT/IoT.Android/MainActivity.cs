@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using Android.App;
 using Android.OS;
 using Android.Widget;
@@ -21,7 +22,26 @@ namespace IoT.Droid
 
             Models.UserRecord userRecord = Models.userRecord;
             TextView tvWelcome = FindViewById<TextView>(Resource.Id.welcomeMA);
-            tvWelcome.Text = "Welcome to Leany Heating\n" + userRecord.FirstName + " " + userRecord.LastName; 
+            tvWelcome.Text = "Welcome to Leany Heating\n" + userRecord.FirstName + " " + userRecord.LastName;
+
+            ReadControlState();
+
+
+
+        }
+
+        // read database values for controls
+        private async void ReadControlState()
+        {
+            RestService _restService;
+            _restService = new RestService();
+            string requestUri = Constants.apiMarkGriffithsEndpoint;
+
+            // get the user record from email address
+            requestUri += "/listArduino";
+            List<Models.ArduinoRecord> dataPoints = (await _restService.GetArduinoRecordsByIDasync(requestUri, Models.userID));
+
+            return;
         }
 
         private void ButtonLogoutClicked(object sender, EventArgs e)

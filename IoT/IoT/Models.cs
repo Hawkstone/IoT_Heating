@@ -12,6 +12,15 @@
             public PermissionLevel PermissionLevel { get; set; }
         }
 
+        public class ArduinoRecord
+        {
+            public int Id { get; set; }
+            public int UserID { get; set; }
+            public string ValueName { get; set; }
+            public int ValueInt { get; set; }
+            public string ValueStr { get; set; }
+        }
+
         public interface IMessage
         {
             void LongAlert(string message);

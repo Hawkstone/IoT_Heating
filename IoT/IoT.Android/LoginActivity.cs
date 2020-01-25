@@ -54,8 +54,7 @@ namespace IoT.Droid
             Button btLogin = FindViewById<Button>(Resource.Id.buttonLogin);
             btLogin.Enabled = false;
             btLogin.SetBackgroundColor(Color.ParseColor(Constants.buttonDisabledColor));
-
-
+            
             // login using entered credentials
             EditText etEmail = FindViewById<EditText>(Resource.Id.editTextEmail);
             EditText etPassword = FindViewById<EditText>(Resource.Id.editTextPassword);
