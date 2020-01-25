@@ -39,7 +39,7 @@ namespace IoT.Droid
 
             // get the user record from email address
             requestUri += "/listArduino";
-            List<Models.ArduinoRecord> dataPoints = (await _restService.GetArduinoRecordsByIDasync(requestUri, Models.userID));
+            var dataPoints = new  List<Models.ArduinoRecord>(await _restService.GetArduinoRecordsByIDasync(requestUri, Models.userID));
 
             return;
         }
