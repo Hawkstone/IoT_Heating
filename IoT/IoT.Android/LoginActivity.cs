@@ -73,8 +73,7 @@ namespace IoT.Droid
         /// <param name="password">login password</param>
         public async Task<bool> Login(string email, string password)
         {
-            RestService _restService;
-            _restService = new RestService();
+            RestService _restService = new RestService();
             string requestUri = Constants.apiMarkGriffithsEndpoint;
 
             // get the user record from email address

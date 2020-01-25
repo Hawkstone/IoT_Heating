@@ -14,17 +14,17 @@
 		android:layout_marginLeft="25.0dp"
 		android:layout_marginRight="25.0dp" />
 	<ToggleButton
-		android:id="@+id/toggleButton1"
+		android:id="@+id/togButSystemState"
+		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:textOn="System On"
-		android:textOff="System Off"
+		android:textOn="System is on"
+		android:textOff="System is off"
 		android:layout_marginTop="27.5dp"
-		android:layout_marginRight="50dp"
-		android:layout_marginLeft="50dp"
-		android:fadingEdge="horizontal|vertical"
+		android:layout_marginRight="100dp"
+		android:layout_marginLeft="100dp"
 		android:fadingEdgeLength="55dp"
-		android:typeface="sans" />
+		android:typeface="sans"/>
 	<TextView
 		android:id="@+id/textViewSetTemp"
 		android:textSize = "30dp"
