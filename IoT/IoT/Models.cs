@@ -17,8 +17,8 @@
             public int Id { get; set; }
             public int UserID { get; set; }
             public string ValueName { get; set; }
-            public int ValueInt { get; set; }
-            public string ValueStr { get; set; }
+            public int? ValueInt { get; set; }
+            public string ValueString { get; set; }
         }
 
         public interface IMessage
