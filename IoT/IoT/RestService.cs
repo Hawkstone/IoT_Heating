@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace IoT
@@ -40,7 +42,7 @@ namespace IoT
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
-                    RootObjectDTO r = JsonConvert.DeserializeObject<RootObjectDTO>(content);                // deserialise the data packet
+                    RootObjectDTO r = JsonConvert.DeserializeObject<RootObjectDTO>(content);         // deserialise the data packet
                     var userRecord = JsonConvert.DeserializeObject<Models.UserRecord>(r.Data);       // deserialise user record objects
 
                     return userRecord;
@@ -100,7 +102,7 @@ namespace IoT
             }
             return new List<Models.ArduinoRecord>();
         }
-               
+
         /// <summary>Get a datapoint</summary>
         /// <param name="uri">e.g. getPassword/:email</param>
         /// <returns>Single datapoint</returns>
@@ -121,6 +123,31 @@ namespace IoT
                 Debug.WriteLine("\tERROR {0}", ex.Message);
             }
             return "";
+        }
+
+        /// <summary>Post values to arduino record</summary>
+        /// <param name="uri">e.g. /arduinoParameter</param>
+        /// <param name="values">Models.ArduinoValues</param>
+        /// <param name="recordID">arduino.id</param>
+        public async Task<bool> PostArduinoValues(string uri, Models.ArduinoValues values)
+        {
+            try
+            {
+                // CAPITALISATION - pay attention to case of properties (in API, record.ValueInt is NOT the same as record.valueInt)
+                string json = JsonConvert.SerializeObject(values);
+                using (var client = new HttpClient())
+                {
+                    var response = await client.PutAsync(
+                        uri,
+                        new StringContent(json, Encoding.UTF8, "application/json"));
+                    if (response.StatusCode == HttpStatusCode.OK) { return true; }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("\tERROR {0}", ex.Message);
+            }
+            return false;
         }
     }
 }

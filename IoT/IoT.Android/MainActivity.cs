@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Graphics;
 using Android.OS;
@@ -12,6 +13,8 @@ namespace IoT.Droid
     [Activity(Label = "MainActivity", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = false)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+        List<Models.ArduinoRecord> dataPoints;
+
         ToggleButton tb;
         SeekBar sb;
         TextView tvSet;
@@ -47,10 +50,26 @@ namespace IoT.Droid
             tvSet.Text = sb.Progress.ToString();
         }
 
-        private void ToggleButtonCheckedChanged(object sender, CompoundButton.CheckedChangeEventArgs e)
+        private async void ToggleButtonCheckedChanged(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            if (e.IsChecked) { tb.SetBackgroundColor(Color.ParseColor(Constants.systemOnBackColor)); }
-            else { tb.SetBackgroundColor(Color.ParseColor(Constants.systemOffBackColor)); }
+            SetSystemState(e.IsChecked);
+            bool x = await WriteControlsState("systemState");
+        }
+
+        private void SetSystemState(bool isChecked)
+        {
+            if (isChecked)
+            {
+                tb.Checked = true;
+                tb.SetBackgroundColor(Color.ParseColor(Constants.systemOnBackColor));
+                tb.Text = "System is on";
+            }
+            else
+            {
+                tb.Checked = false;
+                tb.SetBackgroundColor(Color.ParseColor(Constants.systemOffBackColor));
+                tb.Text = "System is off";
+            }
         }
 
         // read database values for controls
@@ -61,7 +80,7 @@ namespace IoT.Droid
 
             // get the logged in users' Arduino records
             requestUri += "/listArduino";
-            var dataPoints = new List<Models.ArduinoRecord>(await _restService.GetArduinoRecordsByIDasync(requestUri, Models.userID));
+            dataPoints = new List<Models.ArduinoRecord>(await _restService.GetArduinoRecordsByIDasync(requestUri, Models.userID));
 
             // system state
             tb = FindViewById<ToggleButton>(Resource.Id.togButSystemState);
@@ -69,12 +88,11 @@ namespace IoT.Droid
             if (aRec != null)
             {
                 if (aRec.ValueString == "on")
-                { tb.Checked = true; }
-                else { tb.Checked = false; }
+                { SetSystemState(true); }
+                else { SetSystemState(false); }
             }
 
             // temperature setting
-            
             aRec = dataPoints.Find(x => x.ValueName == "setTemperature");
             if (aRec != null)
             {
@@ -92,6 +110,50 @@ namespace IoT.Droid
             { tv.Text = aRec.ValueInt.ToString(); }
 
             return;
+        }
+
+        private async Task<bool> WriteControlsState(string valueName = "")
+        {
+            bool allSucceeded = true;
+
+            if (valueName == "")
+            {
+                // write all values
+                foreach (Models.ArduinoRecord dataPoint in dataPoints)
+                {
+                    bool x = await WriteControlState(dataPoint);
+                    if (!x) { allSucceeded = false; }
+                }
+            }
+            else
+            {
+                // write named value
+                Models.ArduinoRecord dataPoint = dataPoints.Find(x => x.ValueName == valueName);
+                if (dataPoint != null)
+                {
+                    bool x = await WriteControlState(dataPoint);
+                    if (!x) { allSucceeded = false; }
+                }
+            }
+
+            return allSucceeded;
+        }
+
+        private async Task<bool> WriteControlState(Models.ArduinoRecord dataPoint)
+        {
+            RestService _restService = new RestService();
+
+            string requestUri = Constants.apiMarkGriffithsEndpoint;
+            requestUri += "/arduinoParameter/" + dataPoint.Id;
+
+            Models.ArduinoValues ardVal = new Models.ArduinoValues
+            {
+                ValueInt = dataPoint.ValueInt,
+                ValueString = dataPoint.ValueString
+            };
+                        
+            await _restService.PostArduinoValues(requestUri, ardVal);
+            return true;
         }
 
         private void ButtonLogoutClicked(object sender, EventArgs e)

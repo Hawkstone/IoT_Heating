@@ -21,6 +21,12 @@
             public string ValueString { get; set; }
         }
 
+        public class ArduinoValues
+        {
+            public int? ValueInt { get; set; }
+            public string ValueString { get; set; }
+        }
+        
         public interface IMessage
         {
             void LongAlert(string message);
