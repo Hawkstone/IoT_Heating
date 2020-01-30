@@ -1,6 +1,8 @@
 ﻿
 using Android.App;
 using Android.Widget;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IoT
 {
@@ -19,12 +21,52 @@ namespace IoT
             }
         }
 
+        /// <summary>Write the current state of a single control or all controls</summary>
+        /// <param name="valueName">optional: If given, write a single control value</param>
+        public static async Task<bool> WriteControlsState(string valueName = "")
+        {
+            bool allSucceeded = true;
 
+            // write named value
+            if (valueName != "")
+            {
+                Models.ArduinoRecord dataPoint = Models.dataPoints.Find(x => x.ValueName == valueName);
+                if (dataPoint != null)
+                {
+                    bool r = await Services.WriteControlState(dataPoint);
+                    if (!r) { allSucceeded = false; }
+                }
+            }
+            else
+            // write all values
+            {
+                foreach (Models.ArduinoRecord dataPoint in Models.dataPoints)
+                {
+                    bool r = await Services.WriteControlState(dataPoint);
+                    if (!r) { allSucceeded = false; }
+                }
+            }
 
-        //public async Task<List<Models.UserRecord>> GetUserRecord(int userID = -1)
-        //{
-        //    RestService _restService = new RestService();
-        //    string requestUri = Constants.apiMarkGriffithsEndpoint;
-        //}
+            return allSucceeded;
+        }
+        
+        /// <summary>Write a single datapoint to the database</summary>
+        /// <param name="dataPoint">parameter to write</param>
+        public static async Task<bool> WriteControlState(Models.ArduinoRecord dataPoint)
+        {
+            RestService _restService = new RestService();
+
+            string requestUri = Constants.apiMarkGriffithsEndpoint;
+            requestUri += "/arduinoParameter/" + dataPoint.Id;
+
+            Models.ArduinoValues ardVal = new Models.ArduinoValues
+            {
+                ValueInt = dataPoint.ValueInt,
+                ValueString = dataPoint.ValueString
+            };
+
+            await _restService.PostArduinoValues(requestUri, ardVal);
+            return true;
+        }
     }
 }

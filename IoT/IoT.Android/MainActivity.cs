@@ -1,23 +1,21 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Android.App;
 using Android.Graphics;
 using Android.OS;
 using Android.Widget;
+using System;
+using System.Collections.Generic;
 using Xamarin.Essentials;
+using sysDiag = System.Diagnostics;
 
 namespace IoT.Droid
 {
     [Activity(Label = "MainActivity", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = false)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        List<Models.ArduinoRecord> dataPoints;
-
         ToggleButton tb;
         SeekBar sb;
-        TextView tvSet;
+        TextView tv;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -34,7 +32,7 @@ namespace IoT.Droid
             tb = FindViewById<ToggleButton>(Resource.Id.togButSystemState);
             tb.CheckedChange += ToggleButtonCheckedChanged;
 
-            tvSet = FindViewById<TextView>(Resource.Id.textViewSetTemp);
+            tv = FindViewById<TextView>(Resource.Id.textViewSetTemp);
 
             sb = FindViewById<SeekBar>(Resource.Id.seekBarTemp);
             sb.ProgressChanged += SeekBarProgressChanged;
@@ -42,20 +40,25 @@ namespace IoT.Droid
             Button button = FindViewById<Button>(Resource.Id.buttonLogout);
             button.Click += ButtonLogoutClicked;
 
-            ReadControlState();
+            ReadControlsState();
         }
 
-        private void SeekBarProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+        private async void SeekBarProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
-            tvSet.Text = sb.Progress.ToString();
+            tv.Text = sb.Progress.ToString();
         }
 
         private async void ToggleButtonCheckedChanged(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
+            Models.ArduinoRecord dataPoint = Models.dataPoints.Find(x => x.ValueName == Models.cSystemState);
+            if (e.IsChecked) { dataPoint.ValueString = "on"; } else { dataPoint.ValueString = "off"; }
+
             SetSystemState(e.IsChecked);
-            bool x = await WriteControlsState("systemState");
+            bool r = await Services.WriteControlsState(Models.cSystemState);
         }
 
+        /// <summary>Set the System On / System Off control state</summary>
+        /// <param name="isChecked"></param>
         private void SetSystemState(bool isChecked)
         {
             if (isChecked)
@@ -72,88 +75,51 @@ namespace IoT.Droid
             }
         }
 
-        // read database values for controls
-        private async void ReadControlState()
+        /// <summary>Get database values for controls</summary>
+        private async void ReadControlsState()
         {
-            RestService _restService = new RestService();
-            string requestUri = Constants.apiMarkGriffithsEndpoint;
-
-            // get the logged in users' Arduino records
-            requestUri += "/listArduino";
-            dataPoints = new List<Models.ArduinoRecord>(await _restService.GetArduinoRecordsByIDasync(requestUri, Models.userID));
-
-            // system state
-            tb = FindViewById<ToggleButton>(Resource.Id.togButSystemState);
-            Models.ArduinoRecord aRec = dataPoints.Find(x => x.ValueName == "systemState");
-            if (aRec != null)
+            try
             {
-                if (aRec.ValueString == "on")
-                { SetSystemState(true); }
-                else { SetSystemState(false); }
-            }
+                // get the logged in users' Arduino records
+                RestService _restService = new RestService();
+                string requestUri = Constants.apiMarkGriffithsEndpoint;
+                requestUri += "/listArduino";
+                Models.dataPoints = new List<Models.ArduinoRecord>(await _restService.GetArduinoRecordsByIDasync(requestUri, Models.userID));
 
-            // temperature setting
-            aRec = dataPoints.Find(x => x.ValueName == "setTemperature");
-            if (aRec != null)
+
+                // system state
+                tb = FindViewById<ToggleButton>(Resource.Id.togButSystemState);
+                Models.ArduinoRecord aRec = Models.dataPoints.Find(x => x.ValueName == "systemState");
+                if (aRec != null)
+                {
+                    if (aRec.ValueString == "on")
+                    { SetSystemState(true); }
+                    else { SetSystemState(false); }
+                }
+
+                // temperature setting
+                aRec = Models.dataPoints.Find(x => x.ValueName == "setTemperature");
+                if (aRec != null)
+                {
+                    this.tv.Text = aRec.ValueInt.ToString();
+
+                    sb = FindViewById<SeekBar>(Resource.Id.seekBarTemp);
+                    Int32.TryParse(aRec.ValueInt.ToString(), out int progress);
+                    sb.Progress = progress;
+                }
+
+                // current temperature 
+                TextView tv = FindViewById<TextView>(Resource.Id.textViewCurrentTemp);
+                aRec = Models.dataPoints.Find(x => x.ValueName == "currentTemperature");
+                if (aRec != null)
+                { tv.Text = aRec.ValueInt.ToString(); }
+            }
+            catch (Exception ex)
             {
-                tvSet.Text = aRec.ValueInt.ToString();
-
-                sb = FindViewById<SeekBar>(Resource.Id.seekBarTemp);
-                Int32.TryParse(aRec.ValueInt.ToString(), out int progress);
-                sb.Progress = progress;
+                sysDiag.Debug.WriteLine("\tERROR {0}", ex.Message);
             }
-
-            // current temperature 
-            TextView tv = FindViewById<TextView>(Resource.Id.textViewCurrentTemp);
-            aRec = dataPoints.Find(x => x.ValueName == "currentTemperature");
-            if (aRec != null)
-            { tv.Text = aRec.ValueInt.ToString(); }
 
             return;
-        }
-
-        private async Task<bool> WriteControlsState(string valueName = "")
-        {
-            bool allSucceeded = true;
-
-            if (valueName == "")
-            {
-                // write all values
-                foreach (Models.ArduinoRecord dataPoint in dataPoints)
-                {
-                    bool x = await WriteControlState(dataPoint);
-                    if (!x) { allSucceeded = false; }
-                }
-            }
-            else
-            {
-                // write named value
-                Models.ArduinoRecord dataPoint = dataPoints.Find(x => x.ValueName == valueName);
-                if (dataPoint != null)
-                {
-                    bool x = await WriteControlState(dataPoint);
-                    if (!x) { allSucceeded = false; }
-                }
-            }
-
-            return allSucceeded;
-        }
-
-        private async Task<bool> WriteControlState(Models.ArduinoRecord dataPoint)
-        {
-            RestService _restService = new RestService();
-
-            string requestUri = Constants.apiMarkGriffithsEndpoint;
-            requestUri += "/arduinoParameter/" + dataPoint.Id;
-
-            Models.ArduinoValues ardVal = new Models.ArduinoValues
-            {
-                ValueInt = dataPoint.ValueInt,
-                ValueString = dataPoint.ValueString
-            };
-                        
-            await _restService.PostArduinoValues(requestUri, ardVal);
-            return true;
         }
 
         private void ButtonLogoutClicked(object sender, EventArgs e)

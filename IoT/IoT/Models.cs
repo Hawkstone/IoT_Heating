@@ -1,7 +1,12 @@
-﻿namespace IoT
+﻿using System.Collections.Generic;
+
+namespace IoT
 {
     public class Models
     {
+        public const string cSystemState = "systemState";
+        public const string cSetTemperature = "setTemperature";
+
         public class UserRecord
         {
             public int Id { get; set; }
@@ -26,13 +31,14 @@
             public int? ValueInt { get; set; }
             public string ValueString { get; set; }
         }
-        
+
         public interface IMessage
         {
             void LongAlert(string message);
             void ShortAlert(string message);
         }
 
+        public static List<Models.ArduinoRecord> dataPoints;
         public static UserRecord userRecord = null;
         public static int userID = 0;
         public static bool loginSuccess = false;
