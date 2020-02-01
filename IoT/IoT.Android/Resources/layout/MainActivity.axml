@@ -24,7 +24,8 @@
 		android:layout_marginRight="100dp"
 		android:layout_marginLeft="100dp"
 		android:fadingEdgeLength="55dp"
-		android:typeface="sans"/>
+		android:typeface="sans"
+		android:checked = "false"	/>
 	<TextView
 		android:id="@+id/textViewSetTemp"
 		android:textSize = "30dp"
@@ -34,8 +35,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginLeft="150dp"
 		android:layout_marginRight="150dp"
-		android:background="#fff3e5e5"
-		android:textColor="#ff2ed547"
+		android:textColor="#ff9b4949"
 		android:layout_marginTop="26.5dp" />
 	<SeekBar
 		android:id="@+id/seekBarTemp"
@@ -43,11 +43,12 @@
 		android:tickMark="@drawable/tickmark"
 		android:layout_width="match_parent"
 		android:layout_height="40dp"
-		android:max="30"
 		android:layout_marginLeft="50dp"
 		android:layout_marginRight="50dp"
 		android:splitTrack="false"
-		android:tickMarkTintMode="src_in" />
+		android:tickMarkTintMode="src_in"
+		android:min = "5"
+		android:max = "30" />
 	<TextView
 		android:id="@+id/textView1"
 		android:textAppearance="?android:attr/textAppearanceMedium"
@@ -65,8 +66,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginLeft="105dp"
 		android:layout_marginRight="105dp"
-		android:background="#fff3e5e5"
-		android:textColor="#ff2ed547"
+		android:textColor="#ff9c9c9c"
 		android:layout_marginTop="7.0dp" />
 	<Button
 		android:id="@+id/buttonLogout"

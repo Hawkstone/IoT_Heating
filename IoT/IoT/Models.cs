@@ -4,9 +4,6 @@ namespace IoT
 {
     public class Models
     {
-        public const string cSystemState = "systemState";
-        public const string cSetTemperature = "setTemperature";
-
         public class UserRecord
         {
             public int Id { get; set; }
@@ -42,5 +39,6 @@ namespace IoT
         public static UserRecord userRecord = null;
         public static int userID = 0;
         public static bool loginSuccess = false;
+        public static bool ignoreProgressChange;
     }
 }

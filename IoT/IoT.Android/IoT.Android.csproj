@@ -69,6 +69,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\FrancoisOne-Regular.ttf" />
+    <AndroidAsset Include="Assets\Orbitron-VariableFont_wght.ttf" />
+    <AndroidAsset Include="Assets\Audiowide-Regular.ttf" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />

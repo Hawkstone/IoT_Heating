@@ -133,7 +133,7 @@ namespace IoT
         {
             try
             {
-                // CAPITALISATION - pay attention to case of properties (in API, record.ValueInt is NOT the same as record.valueInt)
+                // CAPITALISATION - pay attention to case of properties!! 
                 string json = JsonConvert.SerializeObject(values);
                 using (var client = new HttpClient())
                 {

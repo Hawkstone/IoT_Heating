@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Widget;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using sysDiag = System.Diagnostics;
 
@@ -15,47 +16,147 @@ namespace IoT.Droid
     {
         ToggleButton tb;
         SeekBar sb;
-        TextView tv;
+        TextView tvSetTemp;
+        TextView tvCurrTemp;
+        int tempOffset;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected async override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.MainActivity);
+
+            // setup custom fonts
+            var font = Typeface.CreateFromAsset(Assets, "Orbitron-VariableFont_wght.ttf");
+            tvSetTemp = FindViewById<TextView>(Resource.Id.textViewSetTemp);
+            tvCurrTemp = FindViewById<TextView>(Resource.Id.textViewCurrentTemp);
+            tvSetTemp.Typeface = font;
+            tvCurrTemp.Typeface = font;
 
             // display user info
             Models.UserRecord userRecord = Models.userRecord;
             TextView tvWelcome = FindViewById<TextView>(Resource.Id.welcomeMA);
             tvWelcome.Text = "Welcome to Leany Heating\n" + userRecord.FirstName + " " + userRecord.LastName;
 
-            // setup event listeners
+            // setup event listeners 
             tb = FindViewById<ToggleButton>(Resource.Id.togButSystemState);
             tb.CheckedChange += ToggleButtonCheckedChanged;
-
-            tv = FindViewById<TextView>(Resource.Id.textViewSetTemp);
-
-            sb = FindViewById<SeekBar>(Resource.Id.seekBarTemp);
-            sb.ProgressChanged += SeekBarProgressChanged;
 
             Button button = FindViewById<Button>(Resource.Id.buttonLogout);
             button.Click += ButtonLogoutClicked;
 
-            ReadControlsState();
+            sb = FindViewById<SeekBar>(Resource.Id.seekBarTemp);
+            sb.ProgressChanged += SeekBarProgressChanged;
+
+            // set control states
+            if (await ReadArduinoParameters())
+            {
+                Models.ignoreProgressChange = true;
+                SetControlsState();
+                Models.ignoreProgressChange = false;
+            }
+            else
+            {
+                Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("No stored settings");
+            }
         }
 
         private async void SeekBarProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
-            tv.Text = sb.Progress.ToString();
+            tvSetTemp.Text = (sb.Progress + tempOffset).ToString();
+
+            if (Models.ignoreProgressChange == false)
+            {
+                Models.ArduinoRecord dataPoint = Models.dataPoints.Find(x => x.ValueName == Constants.cSetTemperature);
+                dataPoint.ValueInt = sb.Progress + tempOffset;
+                bool r = await Services.WriteControlsState(Constants.cSetTemperature);
+            }
         }
 
         private async void ToggleButtonCheckedChanged(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            Models.ArduinoRecord dataPoint = Models.dataPoints.Find(x => x.ValueName == Models.cSystemState);
+            Models.ArduinoRecord dataPoint = Models.dataPoints.Find(x => x.ValueName == Constants.cSystemState);
             if (e.IsChecked) { dataPoint.ValueString = "on"; } else { dataPoint.ValueString = "off"; }
 
             SetSystemState(e.IsChecked);
-            bool r = await Services.WriteControlsState(Models.cSystemState);
+            bool r = await Services.WriteControlsState(Constants.cSystemState);
         }
+
+        /// <summary>Get database values for controls</summary>
+        private void SetControlsState()
+        {
+            try
+            {
+                Models.ArduinoRecord aRec;
+
+                // Min / Max temp
+                var min = 0;
+                var max = 0;
+                aRec = Models.dataPoints.Find(x => x.ValueName == Constants.cTempMin);
+                if (aRec != null)
+                { min = aRec.ValueInt.GetValueOrDefault(0); }
+                aRec = Models.dataPoints.Find(x => x.ValueName == Constants.cTempMax);
+                if (aRec != null)
+                { max = aRec.ValueInt.GetValueOrDefault(0); }
+                tempOffset = min;
+                sb.Min = 0;
+                sb.Max = max - min;
+
+                // system state
+                tb = FindViewById<ToggleButton>(Resource.Id.togButSystemState);
+                aRec = Models.dataPoints.Find(x => x.ValueName == Constants.cSystemState);
+                if (aRec != null)
+                {
+                    if (aRec.ValueString == "on")
+                    { SetSystemState(true); }
+                    else { SetSystemState(false); }
+                }
+
+                // temperature setting
+                aRec = Models.dataPoints.Find(x => x.ValueName == Constants.cSetTemperature);
+                if (aRec != null)
+                {
+                    this.tvSetTemp.Text = aRec.ValueInt.ToString();
+
+                    sb = FindViewById<SeekBar>(Resource.Id.seekBarTemp);
+                    Int32.TryParse((aRec.ValueInt - tempOffset).ToString(), out int progress);
+                    sb.Progress = progress;
+                }
+
+                // current temperature 
+                TextView tv = FindViewById<TextView>(Resource.Id.textViewCurrentTemp);
+                aRec = Models.dataPoints.Find(x => x.ValueName == Constants.cCurrentTemperature);
+                if (aRec != null)
+                { tv.Text = aRec.ValueInt.ToString(); }
+            }
+            catch (Exception ex)
+            {
+                sysDiag.Debug.WriteLine("\tERROR {0}", ex.Message);
+            }
+
+            return;
+        }
+
+
+        /// <summary>Get arduino database values for current user</summary>
+        private async Task<bool> ReadArduinoParameters()
+        {
+            try
+            {
+                // get the logged in users' Arduino records
+                RestService _restService = new RestService();
+                string requestUri = Constants.apiMarkGriffithsEndpoint;
+                requestUri += "/listArduino";
+                Models.dataPoints = new List<Models.ArduinoRecord>(await _restService.GetArduinoRecordsByIDasync(requestUri, Models.userID));
+            }
+            catch (Exception ex)
+            {
+                sysDiag.Debug.WriteLine("\tERROR {0}", ex.Message);
+            }
+
+            return true;
+        }
+
 
         /// <summary>Set the System On / System Off control state</summary>
         /// <param name="isChecked"></param>
@@ -73,53 +174,6 @@ namespace IoT.Droid
                 tb.SetBackgroundColor(Color.ParseColor(Constants.systemOffBackColor));
                 tb.Text = "System is off";
             }
-        }
-
-        /// <summary>Get database values for controls</summary>
-        private async void ReadControlsState()
-        {
-            try
-            {
-                // get the logged in users' Arduino records
-                RestService _restService = new RestService();
-                string requestUri = Constants.apiMarkGriffithsEndpoint;
-                requestUri += "/listArduino";
-                Models.dataPoints = new List<Models.ArduinoRecord>(await _restService.GetArduinoRecordsByIDasync(requestUri, Models.userID));
-
-
-                // system state
-                tb = FindViewById<ToggleButton>(Resource.Id.togButSystemState);
-                Models.ArduinoRecord aRec = Models.dataPoints.Find(x => x.ValueName == "systemState");
-                if (aRec != null)
-                {
-                    if (aRec.ValueString == "on")
-                    { SetSystemState(true); }
-                    else { SetSystemState(false); }
-                }
-
-                // temperature setting
-                aRec = Models.dataPoints.Find(x => x.ValueName == "setTemperature");
-                if (aRec != null)
-                {
-                    this.tv.Text = aRec.ValueInt.ToString();
-
-                    sb = FindViewById<SeekBar>(Resource.Id.seekBarTemp);
-                    Int32.TryParse(aRec.ValueInt.ToString(), out int progress);
-                    sb.Progress = progress;
-                }
-
-                // current temperature 
-                TextView tv = FindViewById<TextView>(Resource.Id.textViewCurrentTemp);
-                aRec = Models.dataPoints.Find(x => x.ValueName == "currentTemperature");
-                if (aRec != null)
-                { tv.Text = aRec.ValueInt.ToString(); }
-            }
-            catch (Exception ex)
-            {
-                sysDiag.Debug.WriteLine("\tERROR {0}", ex.Message);
-            }
-
-            return;
         }
 
         private void ButtonLogoutClicked(object sender, EventArgs e)
