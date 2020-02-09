@@ -27,8 +27,11 @@ namespace IoT
 
         public RestService()
         {
-            _client = new HttpClient();
-            //_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _client = new HttpClient
+            {
+                Timeout = new TimeSpan(0, 0, Constants.timeoutSeconds)
+            };
+            Models.nodeOffline = false;
         }
 
         /// <summary>Get database user record</summary>
@@ -50,6 +53,10 @@ namespace IoT
             }
             catch (Exception ex)
             {
+                if (ex.Message == "The operation was canceled.")
+                {
+                    Models.nodeOffline = true;
+                }
                 Debug.WriteLine("\tERROR {0}", ex.Message);
             }
             return null;
@@ -74,6 +81,10 @@ namespace IoT
             }
             catch (Exception ex)
             {
+                if (ex.Message == "The operation was canceled.")
+                {
+                    Models.nodeOffline = true;
+                }
                 Debug.WriteLine("\tERROR {0}", ex.Message);
             }
             return new List<Models.UserRecord>();
@@ -98,6 +109,10 @@ namespace IoT
             }
             catch (Exception ex)
             {
+                if (ex.Message == "The operation was canceled.")
+                {
+                    Models.nodeOffline = true;
+                }
                 Debug.WriteLine("\tERROR {0}", ex.Message);
             }
             return new List<Models.ArduinoRecord>();
@@ -120,6 +135,10 @@ namespace IoT
             }
             catch (Exception ex)
             {
+                if (ex.Message == "The operation was canceled.")
+                {
+                    Models.nodeOffline = true;
+                }
                 Debug.WriteLine("\tERROR {0}", ex.Message);
             }
             return "";
@@ -131,11 +150,12 @@ namespace IoT
         /// <param name="recordID">arduino.id</param>
         public async Task<bool> PostArduinoValues(string uri, Models.ArduinoValues values)
         {
+            Models.nodeOffline = false;
             try
             {
                 // CAPITALISATION - pay attention to case of properties!! 
                 string json = JsonConvert.SerializeObject(values);
-                using (var client = new HttpClient())
+                using (var client = new HttpClient() { Timeout = new TimeSpan(0, 0, Constants.timeoutSeconds) })
                 {
                     var response = await client.PutAsync(
                         uri,
@@ -145,6 +165,10 @@ namespace IoT
             }
             catch (Exception ex)
             {
+                if (ex.Message == "The operation was canceled.")
+                {
+                    Models.nodeOffline = true;
+                }
                 Debug.WriteLine("\tERROR {0}", ex.Message);
             }
             return false;

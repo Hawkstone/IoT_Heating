@@ -20,10 +20,8 @@ namespace IoT.Droid
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
-            SetContentView(Resource.Layout.LoginActivity);
 
-            Button button = FindViewById<Button>(Resource.Id.buttonLogin);
-            button.Click += ButtonLoginClicked;
+            bool showLogin = false;
 
             // see if the user has is already logged in
             var userEmail = Preferences.Get("userEmail", "");
@@ -39,13 +37,25 @@ namespace IoT.Droid
                 }
                 else
                 {
-                    SetContentView(Resource.Layout.LoginActivity);
-                    button = FindViewById<Button>(Resource.Id.buttonLogin);
-                    button.Click += ButtonLoginClicked;
-
-                    EditText et = FindViewById<EditText>(Resource.Id.editTextEmail);
-                    et.RequestFocus();
+                    showLogin = true;
                 }
+            }
+            else
+            {
+                showLogin = true;
+            }
+
+            if (showLogin)
+            {
+                // show login activity
+                Button button = FindViewById<Button>(Resource.Id.buttonLogin);
+
+                SetContentView(Resource.Layout.LoginActivity);
+                button = FindViewById<Button>(Resource.Id.buttonLogin);
+                button.Click += ButtonLoginClicked;
+
+                EditText et = FindViewById<EditText>(Resource.Id.editTextEmail);
+                et.RequestFocus();
             }
         }
 

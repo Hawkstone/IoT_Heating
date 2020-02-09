@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Widget;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace IoT
@@ -65,8 +66,17 @@ namespace IoT
                 ValueString = dataPoint.ValueString
             };
 
-            await _restService.PostArduinoValues(requestUri, ardVal);
-            return true;
+            bool response = false;
+            try
+            {
+                response = await _restService.PostArduinoValues(requestUri, ardVal);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine("\tERROR {0}", ex.Message);
+            }
+            
+            return response;
         }
     }
 }

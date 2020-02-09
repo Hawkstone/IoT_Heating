@@ -70,6 +70,7 @@ namespace IoT.Droid
                 Models.ArduinoRecord dataPoint = Models.dataPoints.Find(x => x.ValueName == Constants.cSetTemperature);
                 dataPoint.ValueInt = sb.Progress + tempOffset;
                 bool r = await Services.WriteControlsState(Constants.cSetTemperature);
+                if (!r) { ShowNodeOffine(); }
             }
         }
 
@@ -80,6 +81,7 @@ namespace IoT.Droid
 
             SetSystemState(e.IsChecked);
             bool r = await Services.WriteControlsState(Constants.cSystemState);
+            if (!r) { ShowNodeOffine(); }
         }
 
         /// <summary>Get database values for controls</summary>
@@ -99,7 +101,10 @@ namespace IoT.Droid
                 if (aRec != null)
                 { max = aRec.ValueInt.GetValueOrDefault(0); }
                 tempOffset = min;
-                sb.Min = 0;
+                if (Android.OS.Build.VERSION.SdkInt > Android.OS.BuildVersionCodes.NMr1)
+                {
+                    sb.Min = 0;
+                }
                 sb.Max = max - min;
 
                 // system state
@@ -183,5 +188,16 @@ namespace IoT.Droid
 
             StartActivity(typeof(LoginActivity));
         }
+
+        private void ShowNodeOffine()
+        {
+            if (Models.nodeOffline)
+            {
+                Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Connection Error. Node offline.");
+            }
+            //Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+        }
     }
 }
+
+

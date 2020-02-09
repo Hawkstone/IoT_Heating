@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Android.App;
+using System.Collections.Generic;
 
 namespace IoT
 {
@@ -35,10 +36,12 @@ namespace IoT
             void ShortAlert(string message);
         }
 
+       
         public static List<Models.ArduinoRecord> dataPoints;
         public static UserRecord userRecord = null;
         public static int userID = 0;
         public static bool loginSuccess = false;
         public static bool ignoreProgressChange;
+        public static bool nodeOffline = false;
     }
 }
