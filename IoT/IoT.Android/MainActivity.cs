@@ -19,6 +19,7 @@ namespace IoT.Droid
         TextView tvSetTemp;
         TextView tvCurrTemp;
         int tempOffset;
+        bool loggedOut = false;
 
         protected async override void OnCreate(Bundle savedInstanceState)
         {
@@ -48,6 +49,18 @@ namespace IoT.Droid
             sb = FindViewById<SeekBar>(Resource.Id.seekBarTemp);
             sb.ProgressChanged += SeekBarProgressChanged;
 
+            // update the control states set by other processes
+            while (true)
+            {
+                CheckAndUpdate();
+                await Task.Delay(Constants.updateLoopInterval);
+            }
+        }
+
+
+        // Read control states and update activity controls
+        private async void CheckAndUpdate()
+        {
             // set control states
             if (await ReadArduinoParameters())
             {
@@ -185,7 +198,7 @@ namespace IoT.Droid
         {
             Preferences.Remove("userEmail");
             Preferences.Remove("userPassword");
-
+            loggedOut = true;
             StartActivity(typeof(LoginActivity));
         }
 
