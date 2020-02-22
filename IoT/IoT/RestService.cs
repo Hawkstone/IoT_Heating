@@ -29,7 +29,7 @@ namespace IoT
         {
             _client = new HttpClient
             {
-                Timeout = new TimeSpan(0, 0, Constants.timeoutSeconds)
+                Timeout = new TimeSpan(0, 0, Constants.apiReqTimeoutSecs)
             };
             Models.nodeOffline = false;
         }
@@ -53,7 +53,7 @@ namespace IoT
             }
             catch (Exception ex)
             {
-                if (ex.Message == "The operation was canceled.")
+                if (ex.Message == "The operation was canceled." | ex.Message == "Connection refused")
                 {
                     Models.nodeOffline = true;
                 }
@@ -81,7 +81,7 @@ namespace IoT
             }
             catch (Exception ex)
             {
-                if (ex.Message == "The operation was canceled.")
+                if (ex.Message == "The operation was canceled." | ex.Message == "Connection refused")
                 {
                     Models.nodeOffline = true;
                 }
@@ -109,7 +109,7 @@ namespace IoT
             }
             catch (Exception ex)
             {
-                if (ex.Message == "The operation was canceled.")
+                if (ex.Message == "The operation was canceled." | ex.Message == "Connection refused")
                 {
                     Models.nodeOffline = true;
                 }
@@ -135,7 +135,7 @@ namespace IoT
             }
             catch (Exception ex)
             {
-                if (ex.Message == "The operation was canceled.")
+                if (ex.Message == "The operation was canceled." | ex.Message == "Connection refused")
                 {
                     Models.nodeOffline = true;
                 }
@@ -144,18 +144,50 @@ namespace IoT
             return "";
         }
 
-        /// <summary>Post values to arduino record</summary>
+
+
+        /// <summary>Put (update) values in arduino record</summary>
         /// <param name="uri">e.g. /arduinoParameter</param>
         /// <param name="values">Models.ArduinoValues</param>
         /// <param name="recordID">arduino.id</param>
-        public async Task<bool> PostArduinoValues(string uri, Models.ArduinoValues values)
+        public async Task<bool> PostArduinoValuesAsync(string uri, Models.ArduinoRecord values)
         {
             Models.nodeOffline = false;
             try
             {
                 // CAPITALISATION - pay attention to case of properties!! 
                 string json = JsonConvert.SerializeObject(values);
-                using (var client = new HttpClient() { Timeout = new TimeSpan(0, 0, Constants.timeoutSeconds) })
+                using (var client = new HttpClient() { Timeout = new TimeSpan(0, 0, Constants.apiReqTimeoutSecs) })
+                {
+                    var response = await client.PostAsync(
+                        uri,
+                        new StringContent(json, Encoding.UTF8, "application/json"));
+                    if (response.StatusCode == HttpStatusCode.OK) { return true; }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "The operation was canceled." | ex.Message == "Connection refused")
+                {
+                    Models.nodeOffline = true;
+                }
+                Debug.WriteLine("\tERROR {0}", ex.Message);
+            }
+            return false;
+        }
+
+        /// <summary>Put (update) values in arduino record</summary>
+        /// <param name="uri">e.g. /arduinoParameter</param>
+        /// <param name="values">Models.ArduinoValues</param>
+        /// <param name="recordID">arduino.id</param>
+        public async Task<bool> PutArduinoValuesAsync(string uri, Models.ArduinoValues values)
+        {
+            Models.nodeOffline = false;
+            try
+            {
+                // CAPITALISATION - pay attention to case of properties!! 
+                string json = JsonConvert.SerializeObject(values);
+                using (var client = new HttpClient() { Timeout = new TimeSpan(0, 0, Constants.apiReqTimeoutSecs) })
                 {
                     var response = await client.PutAsync(
                         uri,
@@ -165,7 +197,7 @@ namespace IoT
             }
             catch (Exception ex)
             {
-                if (ex.Message == "The operation was canceled.")
+                if (ex.Message == "The operation was canceled." | ex.Message == "Connection refused")
                 {
                     Models.nodeOffline = true;
                 }

@@ -4,8 +4,8 @@ namespace IoT
     public class Constants
     {
         public const string apiMarkGriffithsEndpoint = "http://markgriffiths.info:3000";
-        public const int timeoutSeconds = 10;
-        public const int updateLoopInterval = 10000;
+        public const int apiReqTimeoutSecs = 10;
+        public const int updateControlsIntervalMsec = 10000;
 
         public const string buttonBackgroundColor = "#FF2189AD";
         public const string buttonDisabledColor = "#FF7B7B7B";
@@ -17,5 +17,11 @@ namespace IoT
         public const string cCurrentTemperature = "currentTemperature";
         public const string cTempMin = "tempMin";
         public const string cTempMax = "tempMax";
+
+        public const int defaultMin = 5;
+        public const int defaultMax = 30;
+        public const string defaultSystemState = "off";
+        public const int defaultSetTemperature = 20;
+        public const int defaultCurrentTemperature = 20;
     }
 }

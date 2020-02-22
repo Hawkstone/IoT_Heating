@@ -30,7 +30,7 @@ namespace IoT.Droid
             {
                 SetContentView(Resource.Layout.ReloadCredentials);
 
-                Models.loginSuccess = (await Login(userEmail, userPassword));
+                Models.loginSuccess = (await Services.Login(userEmail, userPassword));
                 if (Models.loginSuccess)
                 {
                     StartActivity(typeof(MainActivity));
@@ -68,7 +68,7 @@ namespace IoT.Droid
             // login using entered credentials
             EditText etEmail = FindViewById<EditText>(Resource.Id.editTextEmail);
             EditText etPassword = FindViewById<EditText>(Resource.Id.editTextPassword);
-            Models.loginSuccess = (await Login(etEmail.Text, etPassword.Text));
+            Models.loginSuccess = (await Services.Login(etEmail.Text, etPassword.Text));
             if (Models.loginSuccess)
             {
                 StartActivity(typeof(MainActivity));
@@ -76,44 +76,6 @@ namespace IoT.Droid
             btLogin.Enabled = true;
             btLogin.SetBackgroundColor(Color.ParseColor(Constants.buttonBackgroundColor));
             return;
-        }
-
-        /// <summary>check the user credentials against webserver data</summary>
-        /// <param name="email">login email address</param>
-        /// <param name="password">login password</param>
-        public async Task<bool> Login(string email, string password)
-        {
-            RestService _restService = new RestService();
-            string requestUri = Constants.apiMarkGriffithsEndpoint;
-
-            // get the user record from email address
-            requestUri += "/getUserRecordByEmail";
-            Models.UserRecord userRecord = (await _restService.GetUserRecordByEmailAsync(requestUri, email.Trim()));
-
-            if (userRecord != null)
-            {
-                Models.userRecord = userRecord;
-                Models.userID = Models.userRecord.Id;
-
-                // compare returned password with entered password 
-                if (Models.userRecord.Password.Length > 0)
-                {
-                    if (Models.userRecord.Password == password) { Models.loginSuccess = true; }
-                }
-            }
-
-            if (Models.loginSuccess)
-            {
-                Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Login succeeded");
-                Preferences.Set("userEmail", userRecord.Email);
-                Preferences.Set("userPassword", userRecord.Password);
-                return true;
-            }
-            else
-            {
-                Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Login failed, please try again");
-            }
-            return false;
         }
     }
 }

@@ -64,8 +64,8 @@
 		android:gravity="center"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="105dp"
-		android:layout_marginRight="105dp"
+		android:layout_marginLeft="95dp"
+		android:layout_marginRight="95dp"
 		android:textColor="#ff9c9c9c"
 		android:layout_marginTop="7.0dp" />
 	<Button
@@ -79,6 +79,6 @@
 		android:textColor="#ffffffff"
 		android:layout_marginTop="35.5dp"
 		android:layout_marginRight="120dp"
-		android:layout_marginLeft="120.0dp" />
+		android:layout_marginLeft="120dp" />
 
 </LinearLayout>

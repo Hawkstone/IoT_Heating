@@ -20,14 +20,14 @@ namespace IoT
             public int Id { get; set; }
             public int UserID { get; set; }
             public string ValueName { get; set; }
-            public int? ValueInt { get; set; }
-            public string ValueString { get; set; }
+            public int? ValueInt { get; set; } 
+            public string ValueString { get; set; } 
         }
 
         public class ArduinoValues
         {
-            public int? ValueInt { get; set; }
-            public string ValueString { get; set; }
+            public int? ValueInt { get; set; } 
+            public string ValueString { get; set; } 
         }
 
         public interface IMessage
@@ -41,7 +41,7 @@ namespace IoT
         public static UserRecord userRecord = null;
         public static int userID = 0;
         public static bool loginSuccess = false;
-        public static bool ignoreProgressChange;
+        public static bool bypassAPIupdate;
         public static bool nodeOffline = false;
     }
 }
