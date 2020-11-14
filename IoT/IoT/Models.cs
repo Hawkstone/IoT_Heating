@@ -1,5 +1,4 @@
-﻿using Android.App;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace IoT
 {

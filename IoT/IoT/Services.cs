@@ -1,7 +1,4 @@
-﻿
-using Android.App;
-using Android.Widget;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace IoT
@@ -134,12 +131,12 @@ namespace IoT
         {
             public void LongAlert(string message)
             {
-                Toast.MakeText(Application.Context, message, ToastLength.Long).Show();
+                // Toast.MakeText(Application.Context, message, ToastLength.Long).Show();
             }
 
             public void ShortAlert(string message)
             {
-                Toast.MakeText(Application.Context, message, ToastLength.Short).Show();
+                // Toast.MakeText(Application.Context, message, ToastLength.Short).Show();
             }
         }
     }
