@@ -5,7 +5,7 @@ namespace IoT
     {
         public const string apiMarkGriffithsEndpoint = "http://markgriffiths.info:3000";
         public const int apiReqTimeoutSecs = 10;
-        public const int updateControlsIntervalMsec = 10000;
+        public const int updateControlsIntervalSec = 3;
 
         public const string buttonBackgroundColor = "#FF2189AD";
         public const string buttonDisabledColor = "#FF7B7B7B";

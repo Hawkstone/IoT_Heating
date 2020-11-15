@@ -51,13 +51,17 @@ namespace IoT
                     return userRecord;
                 }
             }
+            catch (HttpRequestException r)
+            {
+                Debug.WriteLine(string.Format("ERROR {0}", r.Message));
+            }
             catch (Exception ex)
             {
                 if (ex.Message == "The operation was canceled." | ex.Message == "Connection refused")
                 {
                     Models.nodeOffline = true;
                 }
-                Debug.WriteLine("\tERROR {0}", ex.Message);
+                Debug.WriteLine(string.Format("ERROR {0}", ex.Message));
             }
             return null;
         }
@@ -85,7 +89,7 @@ namespace IoT
                 {
                     Models.nodeOffline = true;
                 }
-                Debug.WriteLine("\tERROR {0}", ex.Message);
+                Debug.WriteLine(string.Format("ERROR {0}", ex.Message));
             }
             return new List<Models.UserRecord>();
         }
@@ -113,7 +117,7 @@ namespace IoT
                 {
                     Models.nodeOffline = true;
                 }
-                Debug.WriteLine("\tERROR {0}", ex.Message);
+                Debug.WriteLine(string.Format("ERROR {0}", ex.Message));
             }
             return new List<Models.ArduinoRecord>();
         }
@@ -139,7 +143,7 @@ namespace IoT
                 {
                     Models.nodeOffline = true;
                 }
-                Debug.WriteLine("\tERROR {0}", ex.Message);
+                Debug.WriteLine(string.Format("ERROR {0}", ex.Message));
             }
             return "";
         }
@@ -171,7 +175,7 @@ namespace IoT
                 {
                     Models.nodeOffline = true;
                 }
-                Debug.WriteLine("\tERROR {0}", ex.Message);
+                Debug.WriteLine(string.Format("ERROR {0}", ex.Message));
             }
             return false;
         }
@@ -201,7 +205,7 @@ namespace IoT
                 {
                     Models.nodeOffline = true;
                 }
-                Debug.WriteLine("\tERROR {0}", ex.Message);
+                Debug.WriteLine(string.Format("ERROR {0}", ex.Message));
             }
             return false;
         }

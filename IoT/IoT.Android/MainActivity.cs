@@ -1,5 +1,6 @@
 ﻿
 using Android.App;
+using Android.Content;
 using Android.Graphics;
 using Android.OS;
 using Android.Widget;
@@ -21,7 +22,7 @@ namespace IoT.Droid
         int tempOffset;
         bool loggedOut = false;
 
-        protected async override void OnCreate(Bundle savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
@@ -49,12 +50,39 @@ namespace IoT.Droid
             sb = FindViewById<SeekBar>(Resource.Id.seekBarTemp);
             sb.ProgressChanged += SeekBarProgressChanged;
 
-            // update the control states set by other processes
-            while (true)
+            CheckAndUpdate();
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+            Models.updateControls = true;
+
+            Xamarin.Forms.Device.StartTimer(TimeSpan.FromSeconds(Constants.updateControlsIntervalSec), () =>
             {
-                CheckAndUpdate();
-                await Task.Delay(Constants.updateControlsIntervalMsec);
-            }
+                if (Models.updateControls == true)
+                {
+                    CheckAndUpdate();
+                    return true; // return true to repeat counting, false to stop timer
+                }
+                else
+                {
+                    return false;
+                }
+            });
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+            Models.updateControls = false;
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            CheckAndUpdate();
+            Models.updateControls = true;
         }
 
 
@@ -316,7 +344,9 @@ namespace IoT.Droid
             Preferences.Remove("userEmail");
             Preferences.Remove("userPassword");
             loggedOut = true;
+            Intent intent = new Intent(this, typeof(MainActivity));
             StartActivity(typeof(LoginActivity));
+            Finish();
         }
 
         private void ShowNodeOffine()

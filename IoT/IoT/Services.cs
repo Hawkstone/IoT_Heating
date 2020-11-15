@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace IoT
@@ -10,37 +11,45 @@ namespace IoT
         /// <param name="password">login password</param>
         public static async Task<bool> Login(string email, string password)
         {
-            RestService _restService = new RestService();
-            string requestUri = Constants.apiMarkGriffithsEndpoint;
-
-            // get the user record from email address
-            requestUri += "/getUserRecordByEmail";
-            Models.UserRecord userRecord = (await _restService.GetUserRecordByEmailAsync(requestUri, email.Trim()));
-
-            if (userRecord != null)
+            try
             {
-                Models.userRecord = userRecord;
-                Models.userID = Models.userRecord.Id;
+                RestService _restService = new RestService();
+                string requestUri = Constants.apiMarkGriffithsEndpoint;
 
-                // compare returned password with entered password 
-                if (Models.userRecord.Password.Length > 0)
+                // get the user record from email address
+                requestUri += "/getUserRecordByEmail";
+                Models.UserRecord userRecord = (await _restService.GetUserRecordByEmailAsync(requestUri, email.Trim()));
+
+                if (userRecord != null)
                 {
-                    if (Models.userRecord.Password == password) { Models.loginSuccess = true; }
-                }
-            }
+                    Models.userRecord = userRecord;
+                    Models.userID = Models.userRecord.Id;
 
-            if (Models.loginSuccess)
-            {
-                Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Login succeeded");
-                Xamarin.Essentials.Preferences.Set("userEmail", userRecord.Email);
-                Xamarin.Essentials.Preferences.Set("userPassword", userRecord.Password);
-                return true;
+                    // compare returned password with entered password 
+                    if (Models.userRecord.Password.Length > 0)
+                    {
+                        if (Models.userRecord.Password == password) { Models.loginSuccess = true; }
+                    }
+                }
+
+                if (Models.loginSuccess)
+                {
+                    Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Login succeeded");
+                    Xamarin.Essentials.Preferences.Set("userEmail", userRecord.Email);
+                    Xamarin.Essentials.Preferences.Set("userPassword", userRecord.Password);
+                    return true;
+                }
+                else
+                {
+                    Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Login failed, please try again");
+                }
+                return false;
             }
-            else
+            catch (Exception ex)
             {
-                Xamarin.Forms.DependencyService.Get<Models.IMessage>().LongAlert("Login failed, please try again");
+                Debug.Print("Exception: " + ex.Message);
+                throw;
             }
-            return false;
         }
 
         /// <summary>Write the current state of a single control or all controls</summary>

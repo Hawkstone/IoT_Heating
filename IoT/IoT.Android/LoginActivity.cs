@@ -12,7 +12,7 @@ using Xamarin.Essentials;
 
 namespace IoT.Droid
 {
-    [Activity(Label = "Leany Heating", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Leany Heating", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, NoHistory = true)]
     public class LoginActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         async protected override void OnCreate(Bundle savedInstanceState)

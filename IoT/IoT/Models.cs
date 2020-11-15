@@ -42,5 +42,6 @@ namespace IoT
         public static bool loginSuccess = false;
         public static bool bypassAPIupdate;
         public static bool nodeOffline = false;
+        public static bool updateControls = true;
     }
 }
