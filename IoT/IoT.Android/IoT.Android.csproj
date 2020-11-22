@@ -106,9 +106,9 @@
     <Folder Include="Resources\drawable-xxxhdpi\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IoT\IoT_Heating2.csproj">
+    <ProjectReference Include="..\IoT\IoT_Heating.csproj">
       <Project>{86BE0FE5-4831-4E34-B0CB-7BD5DAA0AB06}</Project>
-      <Name>IoT_Heating2</Name>
+      <Name>IoT_Heating</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -138,7 +138,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties TriggeredFromHotReload="False" XamarinHotReloadDebuggerTimeoutExceptionIoTAndroidHideInfoBar="True" />
+      <UserProperties XamarinHotReloadDebuggerTimeoutExceptionIoTAndroidHideInfoBar="True" TriggeredFromHotReload="False" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
